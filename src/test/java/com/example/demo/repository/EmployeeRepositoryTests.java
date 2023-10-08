@@ -2,6 +2,9 @@ package com.example.demo.repository;
 
 // import org.assertj.core.api.Assertions;
 import static org.assertj.core.api.Assertions.assertThat;
+
+import java.util.List;
+
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,5 +33,23 @@ public class EmployeeRepositoryTests {
         // Assertions.assertThat(saved.getId()).isGreaterThan(0);
         assertThat(saved).isNotNull();
         assertThat(saved.getId()).isGreaterThan(0);
+    }
+
+    @DisplayName("JUnit test for get all employees operation")
+    @Test
+    public void givenEmployees_whenFindAll_thenEmployees() {
+        // given - precondition or setup
+        Employee employee1 = Employee.builder().firstName("poll").lastName("smith").email("smith@example.com").build(); 
+        Employee employee2 = Employee.builder().firstName("john").lastName("due").email("john@example.com").build(); 
+        employeeRepository.save(employee1);
+        employeeRepository.save(employee2);
+
+        // when - action or the behaviour that we are going test
+        List<Employee> employees = employeeRepository.findAll();
+        
+        // then - verify the output
+        assertThat(employees).isNotNull();
+        assertThat(employees.size()).isEqualTo(2);
+        
     }
 }
