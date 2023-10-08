@@ -132,4 +132,16 @@ public class EmployeeRepositoryTests {
         Employee retrieved2 = employeeRepository.findUsingJPQL2(firstName, lastName);
         assertThat(retrieved2).isNotNull();
     }
+
+    @Test
+    public void findUsingNativeSQL() {
+        Employee employee = Employee.builder().firstName( "poll").lastName("smith").email("smith@example.com").build();
+        employeeRepository.save(employee);
+
+        Employee retrieve1 = employeeRepository.findUsingNativeSQL1(employee.getFirstName(), employee.getLastName());
+        assertThat(retrieve1).isNotNull();
+
+        Employee retrieve2 = employeeRepository.findUsingNativeSQL2(employee.getLastName(), employee.getFirstName());
+        assertThat(retrieve2).isNotNull();
+    }
 }
