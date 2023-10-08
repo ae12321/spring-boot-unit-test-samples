@@ -4,6 +4,7 @@ package com.example.demo.repository;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -91,11 +92,26 @@ public class EmployeeRepositoryTests {
         retrieved.setEmail("abc@example.com");
         retrieved.setFirstName("abc");
         Employee updated = employeeRepository.save(retrieved);
-        
+
         // then - verify the output
         assertThat(updated.getEmail()).isEqualTo("abc@example.com");
         assertThat(updated.getFirstName()).isEqualTo("abc");
 
         // run `Debug test`, stop breakpoint
+    }
+
+    @DisplayName("delete employee")
+    @Test
+    public void givenEmployee_whenDelete_thenRemoveEmployee() {
+        // given - precondition or setup
+        Employee employee = Employee.builder().firstName("poll").lastName("smith").email("smith@example.com").build();
+        employeeRepository.save(employee);
+
+        // when - action or the behaviour that we are going test
+        employeeRepository.deleteById(employee.getId());
+        Optional<Employee> maybeEmployee = employeeRepository.findById(employee.getId());
+
+        // then - verify the output
+        assertThat(maybeEmployee).isEmpty();
     }
 }
