@@ -80,4 +80,22 @@ public class EmployeeRepositoryTests {
         assertThat(retrieved).isNotNull();
     }
 
+    @Test
+    public void givenEmployee_whenUpdateEmployee_thenReturnUpdatedEmployee() {
+        // given - precondition or setup
+        Employee employee = Employee.builder().firstName("poll").lastName("smith").email("smith@example.com").build();
+        employeeRepository.save(employee);
+
+        // when - action or the behaviour that we are going test
+        Employee retrieved = employeeRepository.findById(employee.getId()).get();
+        retrieved.setEmail("abc@example.com");
+        retrieved.setFirstName("abc");
+        Employee updated = employeeRepository.save(retrieved);
+        
+        // then - verify the output
+        assertThat(updated.getEmail()).isEqualTo("abc@example.com");
+        assertThat(updated.getFirstName()).isEqualTo("abc");
+
+        // run `Debug test`, stop breakpoint
+    }
 }
