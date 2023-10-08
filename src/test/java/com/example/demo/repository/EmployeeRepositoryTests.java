@@ -12,10 +12,9 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
 import com.example.demo.model.Employee;
 
-
 @DataJpaTest
 public class EmployeeRepositoryTests {
-    
+
     @Autowired
     private EmployeeRepository employeeRepository;
 
@@ -23,7 +22,7 @@ public class EmployeeRepositoryTests {
     @Test
     public void givenEmployeeObject_whenSave_thenReturnSavedEmployee() {
         // given - precondition or setup
-        Employee employee = Employee.builder().firstName("poll").lastName("smith").email("smith@example.com").build(); 
+        Employee employee = Employee.builder().firstName("poll").lastName("smith").email("smith@example.com").build();
 
         // when - action or the behaviour that we are going test
         Employee saved = employeeRepository.save(employee);
@@ -39,17 +38,30 @@ public class EmployeeRepositoryTests {
     @Test
     public void givenEmployees_whenFindAll_thenEmployees() {
         // given - precondition or setup
-        Employee employee1 = Employee.builder().firstName("poll").lastName("smith").email("smith@example.com").build(); 
-        Employee employee2 = Employee.builder().firstName("john").lastName("due").email("john@example.com").build(); 
+        Employee employee1 = Employee.builder().firstName("poll").lastName("smith").email("smith@example.com").build();
+        Employee employee2 = Employee.builder().firstName("john").lastName("due").email("john@example.com").build();
         employeeRepository.save(employee1);
         employeeRepository.save(employee2);
 
         // when - action or the behaviour that we are going test
         List<Employee> employees = employeeRepository.findAll();
-        
+
         // then - verify the output
         assertThat(employees).isNotNull();
         assertThat(employees.size()).isEqualTo(2);
-        
+    }
+
+    @DisplayName("get employee by id")
+    @Test
+    public void givenEmployee_whenFindById_thenReturnEmployee() {
+        // given - precondition or setup
+        Employee employee = Employee.builder().firstName("poll").lastName("smith").email("smith@example.com").build();
+        employeeRepository.save(employee);
+
+        // when - action or the behaviour that we are going test
+        Employee retrieved = employeeRepository.findById(employee.getId()).get();
+
+        // then - verify the output
+        assertThat(retrieved).isNotNull();
     }
 }
