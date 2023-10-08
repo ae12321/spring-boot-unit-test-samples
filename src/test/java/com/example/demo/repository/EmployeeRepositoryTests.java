@@ -114,4 +114,22 @@ public class EmployeeRepositoryTests {
         // then - verify the output
         assertThat(maybeEmployee).isEmpty();
     }
+
+    @DisplayName("custom query using JPQL")
+    @Test
+    public void givenFirstNameAndLastName_whenFindByFirstNameAndLastNameUsingJPQL_thenReturnEmployee() {
+        String firstName = "poll";
+        String lastName = "smith";
+
+        Employee employee = Employee.builder().firstName(firstName).lastName(lastName).email("smith@example.com").build();
+        employeeRepository.save(employee);
+
+        // custom query using JPQL with index
+        Employee retrieved1 = employeeRepository.findUsingJPQL1(firstName, lastName);
+        assertThat(retrieved1).isNotNull();
+
+        // custom query using JPQL with named params
+        Employee retrieved2 = employeeRepository.findUsingJPQL2(firstName, lastName);
+        assertThat(retrieved2).isNotNull();
+    }
 }
