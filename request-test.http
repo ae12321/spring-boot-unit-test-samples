@@ -10,3 +10,10 @@ content-type: application/json
     "lastName": "smith",
     "email": "smith@example.com"
 }
+
+###
+GET http://localhost:8080/api/employees
+content-type: application/json
+
+
+###

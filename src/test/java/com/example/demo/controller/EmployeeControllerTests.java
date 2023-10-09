@@ -1,5 +1,8 @@
 package com.example.demo.controller;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.hamcrest.CoreMatchers;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentMatcher;
@@ -50,6 +53,21 @@ public class EmployeeControllerTests {
             .andExpect(MockMvcResultMatchers.jsonPath("$.firstName", CoreMatchers.is(employee.getFirstName())))
             .andExpect(MockMvcResultMatchers.jsonPath("$.lastName", CoreMatchers.is(employee.getLastName())))
             .andExpect(MockMvcResultMatchers.jsonPath("$.email", CoreMatchers.is(employee.getEmail())));
+    }
+
+    @Test
+    public void test2() throws Exception {
+        List<Employee> employees = new ArrayList<>();
+        employees.add(Employee.builder().firstName("paul").lastName("smith").email("smith@example.com").build());
+        employees.add(Employee.builder().firstName("jane").lastName("doe").email("doe@example.com").build());
+
+        BDDMockito.given(employeeService.getAllEmployees()).willReturn(employees);
+
+        ResultActions response = mockMvc.perform(MockMvcRequestBuilders.get("/api/employees"));
+
+        response.andDo(MockMvcResultHandlers.print())
+            .andExpect(MockMvcResultMatchers.status().isOk())
+            .andExpect(MockMvcResultMatchers.jsonPath("$.size()", CoreMatchers.is(employees.size())));
     }
 
 }
