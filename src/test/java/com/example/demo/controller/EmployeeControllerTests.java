@@ -158,4 +158,15 @@ public class EmployeeControllerTests {
         response.andDo(MockMvcResultHandlers.print())
             .andExpect(MockMvcResultMatchers.status().isNotFound());
     }
+
+    @Test
+    public void test_deleteEmployee_1() throws Exception {
+        long employeeId = 1L;
+        BDDMockito.willDoNothing().given(employeeService).deleteEmployee(employeeId);
+
+        ResultActions response = mockMvc.perform(MockMvcRequestBuilders.delete("/api/employees/{id}", employeeId));
+
+        response.andDo(MockMvcResultHandlers.print())
+            .andExpect(MockMvcResultMatchers.status().isOk());
+    }
 }
