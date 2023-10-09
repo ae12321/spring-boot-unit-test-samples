@@ -11,6 +11,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 
 @Setter
 @Getter
@@ -18,6 +19,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @Builder
 @Entity
+@ToString
 @Table(name = "employees")
 public class Employee {
     @Id
