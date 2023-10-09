@@ -19,7 +19,6 @@ import static org.mockito.Mockito.verify;
 import org.mockito.BDDMockito;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.example.demo.exception.ResourceNotFoundException;
