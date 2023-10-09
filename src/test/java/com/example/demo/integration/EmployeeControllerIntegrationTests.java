@@ -7,6 +7,7 @@ import java.util.Optional;
 import org.hamcrest.CoreMatchers;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentMatchers;
 import org.mockito.BDDMockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -109,4 +110,51 @@ public class EmployeeControllerIntegrationTests {
         response.andDo(MockMvcResultHandlers.print())
             .andExpect(MockMvcResultMatchers.status().isNotFound());
     }
+
+
+
+    @Test
+    public void updateEmployee() throws Exception {
+        Employee employee = Employee.builder()
+            .firstName("paul")
+            .lastName("smith")
+            .email("smith@example.com")
+            .build();
+        employeeRepository.save(employee);
+
+        employee.setFirstName("jane");
+        employee.setLastName("doe");
+        employee.setEmail("doe@example.com");
+        employeeRepository.save(employee);
+        
+        ResultActions response = mockMvc.perform(
+            MockMvcRequestBuilders.put("/api/employees/{id}", employee.getId())
+        .contentType(MediaType.APPLICATION_JSON)
+        .content(objectMapper.writeValueAsString(employee)));
+
+        response.andDo(MockMvcResultHandlers.print())
+            .andExpect(MockMvcResultMatchers.status().isOk())
+            .andExpect(MockMvcResultMatchers.jsonPath("$.firstName", CoreMatchers.is(employee.getFirstName())))
+            .andExpect(MockMvcResultMatchers.jsonPath("$.lastName", CoreMatchers.is(employee.getLastName())))
+            .andExpect(MockMvcResultMatchers.jsonPath("$.email", CoreMatchers.is(employee.getEmail())));
+    }
+
+    @Test
+    public void test_updateEmployee_2() throws Exception {
+        Employee employee = Employee.builder()
+            .firstName("jane")
+            .lastName("doe")
+            .email("doe@example.com")
+            .build();
+        employeeRepository.save(employee);
+
+        ResultActions response = mockMvc.perform(
+            MockMvcRequestBuilders.put("/api/employees/{id}", employee.getId() + 1)
+        .contentType(MediaType.APPLICATION_JSON)
+        .content(objectMapper.writeValueAsString(employee)));
+
+        response.andDo(MockMvcResultHandlers.print())
+            .andExpect(MockMvcResultMatchers.status().isNotFound());
+    }
+
 }
