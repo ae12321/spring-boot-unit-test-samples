@@ -92,5 +92,17 @@ public class EmployeeControllerTests {
             .andExpect(MockMvcResultMatchers.jsonPath("$.email", CoreMatchers.is(employee.getEmail())));
     }
 
-    
+    @Test
+    public void test4() throws Exception {
+        long employeeId = 1L;
+
+        BDDMockito.given(employeeService.getEmployeeById(employeeId)).willReturn(Optional.empty());
+
+        ResultActions response = mockMvc.perform(MockMvcRequestBuilders.get("/api/employees/{id}", employeeId));
+
+        response.andDo(MockMvcResultHandlers.print())
+            .andExpect(MockMvcResultMatchers.status().isNotFound());
+    }
+
+
 }
