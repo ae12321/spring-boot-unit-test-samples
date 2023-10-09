@@ -7,12 +7,18 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
+
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import com.example.demo.exception.ResourceNotFoundException;
 import com.example.demo.model.Employee;
 import com.example.demo.repository.EmployeeRepository;
 import com.example.demo.service.impl.EmployeeServiceImpl;
@@ -52,5 +58,21 @@ public class EmployeeServiceTests {
         System.out.println(saved);
 
         Assertions.assertThat(saved).isNotNull();
+    }
+
+    @DisplayName("saveEmployee method")
+    @Test
+    public void givenExistingEmployee_whenSaveEmployee_thenThrowsException() {
+        
+        given(employeeRepository.findByEmail(employee1.getEmail())).willReturn(Optional.of(employee1));
+
+        System.out.println(employeeRepository);
+        System.out.println(employeeService);
+
+        org.junit.jupiter.api.Assertions.assertThrows(ResourceNotFoundException.class, ()->{
+            employeeService.saveEmployee(employee1);
+        });
+
+        verify(employeeRepository, never()).save(any(Employee.class));
     }
 }
