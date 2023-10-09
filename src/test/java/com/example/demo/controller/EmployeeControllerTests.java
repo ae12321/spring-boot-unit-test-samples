@@ -135,4 +135,27 @@ public class EmployeeControllerTests {
             .andExpect(MockMvcResultMatchers.jsonPath("$.lastName", CoreMatchers.is(updated.getLastName())))
             .andExpect(MockMvcResultMatchers.jsonPath("$.email", CoreMatchers.is(updated.getEmail())));
     }
+
+    @Test
+    public void test_updateEmployee_2() throws Exception {
+        long employeeId = 1L;
+
+        Employee updated = Employee.builder()
+            .id(employeeId)
+            .firstName("jane")
+            .lastName("doe")
+            .email("doe@example.com")
+            .build();
+        
+        BDDMockito.given(employeeService.getEmployeeById(employeeId)).willReturn(Optional.empty());
+        BDDMockito.given(employeeService.updateEmployee(ArgumentMatchers.any(Employee.class))).willAnswer(invocation -> invocation.getArgument(0));
+
+        ResultActions response = mockMvc.perform(
+            MockMvcRequestBuilders.put("/api/employees/{id}", employeeId)
+        .contentType(MediaType.APPLICATION_JSON)
+        .content(objectMapper.writeValueAsString(updated)));
+
+        response.andDo(MockMvcResultHandlers.print())
+            .andExpect(MockMvcResultMatchers.status().isNotFound());
+    }
 }
