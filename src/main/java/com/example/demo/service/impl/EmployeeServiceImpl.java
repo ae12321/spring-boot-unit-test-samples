@@ -1,5 +1,6 @@
 package com.example.demo.service.impl;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,5 +31,9 @@ public class EmployeeServiceImpl implements EmployeeService {
         Employee saved = employeeRepository.save(employee);
         return saved;
     }
-    
+
+    @Override
+    public List<Employee> getAllEmployees() {
+        return this.employeeRepository.findAll();
+    }
 }

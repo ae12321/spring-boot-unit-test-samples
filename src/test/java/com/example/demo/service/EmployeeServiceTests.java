@@ -1,5 +1,7 @@
 package com.example.demo.service;
 
+import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 
 import org.assertj.core.api.Assertions;
@@ -13,6 +15,7 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 
+import org.mockito.BDDMockito;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -35,13 +38,15 @@ public class EmployeeServiceTests {
     private EmployeeServiceImpl employeeService;
 
     private Employee employee1;
+    private Employee employee2;
 
     @BeforeEach
     public void setup() {
         // employeeRepository = Mockito.mock(EmployeeRepository.class);
         // employeeService = new EmployeeServiceImpl(employeeRepository);
 
-        employee1 = Employee.builder().id(1L).firstName("poll").lastName("smith").email("smith@example.com").build();
+        employee1 = Employee.builder().id(1L).firstName("paul").lastName("smith").email("paul@example.com").build();
+        employee2 = Employee.builder().id(2L).firstName("jane").lastName("doe").email("jane@example.com").build();
     }
 
     @DisplayName("saveEmployee method")
@@ -74,5 +79,27 @@ public class EmployeeServiceTests {
         });
 
         verify(employeeRepository, never()).save(any(Employee.class));
+    }
+
+    @DisplayName("getAllEmployees method : positive")
+    @Test
+    public void givenEmployees_whenGetAllEmployees_thenReturnEmployees() {
+        BDDMockito.given(employeeRepository.findAll()).willReturn(List.of(employee1, employee2));        
+        
+        List<Employee> employees = employeeService.getAllEmployees();
+        
+        Assertions.assertThat(employees).isNotNull();
+        Assertions.assertThat(employees.size()).isEqualTo(2);
+    }
+
+    @DisplayName("getAllEmployees method : negative")
+    @Test
+    public void givenEmptyEmployees_whenGetAllEmployees_thenEmptyReturnEmployees() {
+        BDDMockito.given(employeeRepository.findAll()).willReturn(Collections.emptyList());        
+        
+        List<Employee> employees = employeeService.getAllEmployees();
+        
+        Assertions.assertThat(employees).isEmpty();
+        Assertions.assertThat(employees.size()).isEqualTo(0);
     }
 }
