@@ -13,6 +13,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 import org.mockito.BDDMockito;
@@ -52,7 +53,7 @@ public class EmployeeServiceTests {
     @DisplayName("saveEmployee method")
     @Test
     public void givenEmployee_whenSaveEmployee_thenReturnEmployee() {
-        
+
         // saveEmployee内で使用するmockすべきものの戻りを固定化
         given(employeeRepository.findByEmail(employee1.getEmail())).willReturn(Optional.empty());
         given(employeeRepository.save(employee1)).willReturn(employee1);
@@ -68,13 +69,13 @@ public class EmployeeServiceTests {
     @DisplayName("saveEmployee method")
     @Test
     public void givenExistingEmployee_whenSaveEmployee_thenThrowsException() {
-        
+
         given(employeeRepository.findByEmail(employee1.getEmail())).willReturn(Optional.of(employee1));
 
         System.out.println(employeeRepository);
         System.out.println(employeeService);
 
-        org.junit.jupiter.api.Assertions.assertThrows(ResourceNotFoundException.class, ()->{
+        org.junit.jupiter.api.Assertions.assertThrows(ResourceNotFoundException.class, () -> {
             employeeService.saveEmployee(employee1);
         });
 
@@ -84,10 +85,10 @@ public class EmployeeServiceTests {
     @DisplayName("getAllEmployees method : positive")
     @Test
     public void givenEmployees_whenGetAllEmployees_thenReturnEmployees() {
-        BDDMockito.given(employeeRepository.findAll()).willReturn(List.of(employee1, employee2));        
-        
+        BDDMockito.given(employeeRepository.findAll()).willReturn(List.of(employee1, employee2));
+
         List<Employee> employees = employeeService.getAllEmployees();
-        
+
         Assertions.assertThat(employees).isNotNull();
         Assertions.assertThat(employees.size()).isEqualTo(2);
     }
@@ -95,11 +96,44 @@ public class EmployeeServiceTests {
     @DisplayName("getAllEmployees method : negative")
     @Test
     public void givenEmptyEmployees_whenGetAllEmployees_thenEmptyReturnEmployees() {
-        BDDMockito.given(employeeRepository.findAll()).willReturn(Collections.emptyList());        
-        
+        BDDMockito.given(employeeRepository.findAll()).willReturn(Collections.emptyList());
+
         List<Employee> employees = employeeService.getAllEmployees();
-        
+
         Assertions.assertThat(employees).isEmpty();
         Assertions.assertThat(employees.size()).isEqualTo(0);
+    }
+
+    @DisplayName("getEmployeeById method")
+    @Test
+    public void givenEmployeeId_whenGetEmployeeById_thenReturnSpecificEmployee() {
+        BDDMockito.given(employeeRepository.findById(1L)).willReturn(Optional.of(employee1));
+
+        Employee retrieved = employeeService.getEmployeeById(employee1.getId()).get();
+
+        Assertions.assertThat(retrieved).isNotNull();
+    }
+
+    @DisplayName("updateEmployee method")
+    @Test
+    public void givenEmployee_whenUpdateEmployee_thenReturnUpdatedEmployee() {
+        BDDMockito.given(employeeRepository.save(employee1)).willReturn(employee1);
+
+        employee1.setEmail("abc@example.com");
+        employee1.setFirstName("abc");
+
+        Employee updated = employeeService.updateEmployee(employee1);
+
+        Assertions.assertThat(updated.getEmail()).isEqualTo("abc@example.com");
+        Assertions.assertThat(updated.getFirstName()).isEqualTo("abc");
+    }
+
+    @DisplayName("deleteEmployee method")
+    @Test
+    public void givenId_whenDeleteEmployee_thenDelete() {
+        long employeeId = 1L;
+        BDDMockito.willDoNothing().given(employeeRepository).deleteById(employeeId);
+        employeeService.deleteEmployee(employeeId);
+        verify(employeeRepository, times(1)).deleteById(employeeId);
     }
 }
