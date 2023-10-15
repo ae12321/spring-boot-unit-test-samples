@@ -34,37 +34,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureMockMvc
 @Testcontainers
-public class EmployeeControllerIT {
-
-    public static PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>(
-        "postgres:16-alpine"
-    )
-        .withUsername("testuser")
-        .withPassword("asdfasdf")
-        .withDatabaseName("postgres");
-
-    // postgresインスタンスをApplicationContextにリンクさせるために
-    @DynamicPropertySource
-    public static void configureProperties(DynamicPropertyRegistry registry) {
-        registry.add("spring.datasource.url", postgres::getJdbcUrl);
-        registry.add("spring.datasource.username", postgres::getUsername);
-        registry.add("spring.datasource.password", postgres::getPassword);
-        System.out.println(postgres.getUsername() + " : " + postgres.getPassword() + " : " + postgres.getDatabaseName());
-    }
-
-    // 起動と停止
-    @BeforeAll
-    public static void beforeAll() {
-        postgres.start();
-    }
-    @AfterAll
-    public static void afterAll() {
-        postgres.stop();
-    }
-
-    @BeforeEach
-    public void beforeEach() {
-    }
+public class EmployeeControllerIT extends AbstractbaseIT {
 
     @Autowired
     private MockMvc mockMvc;
