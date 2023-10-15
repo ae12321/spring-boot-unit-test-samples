@@ -11,12 +11,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
+import com.example.demo.integration.AbstractbaseIT;
 import com.example.demo.model.Employee;
 
 @DataJpaTest
 // In-memoryデータベースを無効
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-public class EmployeeRepositoryIntegrationTests {
+public class EmployeeRepositoryIntegrationTests extends AbstractbaseIT {
 
     @Autowired
     private EmployeeRepository employeeRepository;
