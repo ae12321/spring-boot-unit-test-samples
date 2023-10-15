@@ -1,19 +1,30 @@
 package com.example.demo.integration;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import org.hamcrest.CoreMatchers;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.DynamicPropertyRegistry;
+import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
+import org.testcontainers.containers.GenericContainer;
+import org.testcontainers.containers.PostgreSQLContainer;
+import org.testcontainers.junit.jupiter.Container;
+import org.testcontainers.junit.jupiter.Testcontainers;
+import org.testcontainers.utility.DockerImageName;
 
 import com.example.demo.model.Employee;
 import com.example.demo.repository.EmployeeRepository;
@@ -22,8 +33,39 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 // fixing port number
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureMockMvc
-public class EmployeeControllerIntegrationTests {
-    
+@Testcontainers
+public class EmployeeControllerIT {
+
+    public static PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>(
+        "postgres:16-alpine"
+    )
+        .withUsername("testuser")
+        .withPassword("asdfasdf")
+        .withDatabaseName("postgres");
+
+    // postgresインスタンスをApplicationContextにリンクさせるために
+    @DynamicPropertySource
+    public static void configureProperties(DynamicPropertyRegistry registry) {
+        registry.add("spring.datasource.url", postgres::getJdbcUrl);
+        registry.add("spring.datasource.username", postgres::getUsername);
+        registry.add("spring.datasource.password", postgres::getPassword);
+        System.out.println(postgres.getUsername() + " : " + postgres.getPassword() + " : " + postgres.getDatabaseName());
+    }
+
+    // 起動と停止
+    @BeforeAll
+    public static void beforeAll() {
+        postgres.start();
+    }
+    @AfterAll
+    public static void afterAll() {
+        postgres.stop();
+    }
+
+    @BeforeEach
+    public void beforeEach() {
+    }
+
     @Autowired
     private MockMvc mockMvc;
 
